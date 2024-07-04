@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html class="x-admin-sm" xmlns:th="http://www.thymeleaf.org">
+<div th:replace="~{common/header::header}"></div>
+<body>
+<style>
+    .layui-form-item .layui-form-label {
+        width: 20%;
+    }
+
+    .layui-form-item .layui-input-inline {
+        width: 60%;
+    }
+</style>
+<div class="layui-fluid layui-margin-3">
+    <div class="layui-row">
+        <form class="layui-form" method="post" autocomplete="off">
+            <input type="hidden" name="id" th:value="${bean.id}" th:if="${!isAdd}">
+            <div class="layui-form-item">
+                <label class="layui-form-label">
+                    <span class="layui-font-red">*</span>学生
+                </label>
+                <div class="layui-input-inline">
+                    <select name="studentUserId" lay-verify="required" lay-search>
+                        <option value="">--请选择--</option>
+                        <option th:each="i:${userList}" th:value="${i.userId}" th:text="${i.nickname}" th:selected="${bean.studentUserId == i.userId}"></option>
+                    </select>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">
+                    <span class="layui-font-red">*</span>课程
+                </label>
+                <div class="layui-input-inline">
+                    <input name="courseName" lay-verify="required" class="layui-input" maxlength="16">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">
+                    <span class="layui-font-red">*</span>课堂表现
+                </label>
+                <div class="layui-input-inline">
+                    <input type="radio" name="classroomPerformance" value="1" title="普通加分">
+                    <input type="radio" name="classroomPerformance" value="2" title="特别加分">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">
+                    <span class="layui-font-red">*</span>实验
+                </label>
+                <div class="layui-input-inline">
+                    <input type="radio" name="experiment" value="1" title="普通加分">
+                    <input type="radio" name="experiment" value="2" title="特别加分">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">
+                    <span class="layui-font-red">*</span>课后作业
+                </label>
+                <div class="layui-input-inline">
+                    <input type="radio" name="homework" value="1" title="普通加分">
+                    <input type="radio" name="homework" value="2" title="特别加分">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">
+                    <span class="layui-font-red">*</span>大作业
+                </label>
+                <div class="layui-input-inline">
+                    <input type="radio" name="bigJob" value="1" title="普通加分">
+                    <input type="radio" name="bigJob" value="2" title="特别加分">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">
+                    <span class="layui-font-red">*</span>成绩
+                </label>
+                <div class="layui-input-inline">
+                    <input type="number" name="score" lay-verify="required" class="layui-input" max="100" min="0">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label"></label>
+                <button class="layui-btn" lay-filter="add" lay-submit>提交</button>
+            </div>
+        </form>
+    </div>
+</div>
+<script>
+    layui.use(function () {
+        layui.form.verify();
+        layui.form.on('submit(add)', function (data) {
+            layui.$.ajax({
+                contentType: "application/json",
+                url:BASE_URL + "student/learn",
+                type : "POST",
+                data: JSON.stringify(data.field),
+                dataType:'json',
+                success : function (resp) {
+                    if (resp.status === 0) {
+                        layui.layer.closeAll();
+                        parent.location.reload();
+                    } else {
+                        layui.layer.alert(resp.msg);
+                    }
+                }
+            })
+            return false;
+        });
+        layui.form.render();
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<div th:replace="~{common/header::header}"></div>
+<body>
+<div class="content-top-nav">
+    <span class="layui-breadcrumb">
+        <a href="javascript:void(0)">首页</a>
+        <a href="javascript:void(0)">我的学习情况</a>
+        <a>
+          <cite>列表</cite>
+        </a>
+    </span>
+    <a class="layui-btn layui-btn-sm layui-layout-right layui-margin-1" onclick="location.reload()" title="刷新">
+        <i class="layui-icon layui-icon-refresh"></i>
+    </a>
+</div>
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-body ">
+                    <form class="layui-form layui-col-space5">
+                        <div class="layui-inline layui-show-xs-block">
+                            <input class="layui-input" name="courseName" placeholder="课程" th:value="${courseName}">
+                        </div>
+                        <div class="layui-inline layui-show-xs-block">
+                            <div class="layui-input-inline">
+                                <button class="layui-btn" lay-submit lay-filter="search" id="searchBtn">
+                                    <i class="layui-icon layui-icon-search"></i>查询
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="layui-card-body">
+                    <table class="layui-table">
+                        <thead>
+                            <tr>
+                                <th>编号</th>
+                                <th>课程</th>
+                                <th>教师</th>
+                                <th>课堂表现</th>
+                                <th>实验</th>
+                                <th>课后作业</th>
+                                <th>大作业</th>
+                                <th>成绩</th>
+                                <th>排名</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="item:${studentLearns}">
+                                <td th:text="${item.id}"></td>
+                                <td th:text="${item.courseName}"></td>
+                                <td th:text="${userMap.get(item.teacherUserId).nickname}"></td>
+                                <td>
+                                     <span th:if="${item.classroomPerformance == 0}">未知</span>
+                                     <span th:if="${item.classroomPerformance == 1}">普通加分</span>
+                                     <span th:if="${item.classroomPerformance == 2}">特别加分</span>
+                                </td>
+                                <td>
+                                    <span th:if="${item.experiment == 0}">未知</span>
+                                    <span th:if="${item.experiment == 1}">普通加分</span>
+                                    <span th:if="${item.experiment == 2}">特别加分</span>
+                                </td>
+                                <td>
+                                    <span th:if="${item.homework == 0}">未知</span>
+                                    <span th:if="${item.homework == 1}">普通加分</span>
+                                    <span th:if="${item.homework == 2}">特别加分</span>
+                                </td>
+                                <td>
+                                    <span th:if="${item.bigJob == 0}">未知</span>
+                                    <span th:if="${item.bigJob == 1}">普通加分</span>
+                                    <span th:if="${item.bigJob == 2}">特别加分</span>
+                                </td>
+                                <td th:text="${item.score}"></td>
+                                <td th:text="${item.rank}"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    layui.use(function (){});
+</script>
+</body>
+</html>

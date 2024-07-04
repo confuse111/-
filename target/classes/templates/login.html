@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<div th:replace="~{common/header::header}"></div>
+<body>
+<style>
+    .demo-login-container {
+        width: 320px;
+        margin: 21px auto 0;
+    }
+
+    .demo-login-other .layui-icon {
+        position: relative;
+        display: inline-block;
+        margin: 0 2px;
+        top: 2px;
+        font-size: 26px;
+    }
+</style>
+<form class="layui-form" autocomplete="off">
+    <div class="demo-login-container">
+        <div class="layui-form-item">
+            <div class="layui-input-wrap">
+                <div class="layui-input-prefix">
+                    <i class="layui-icon layui-icon-username"></i>
+                </div>
+                <input type="text" name="username" value="" lay-verify="required" placeholder="Username"
+                       lay-reqtext="Please Enter Username" autocomplete="off" class="layui-input" lay-affix="clear">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-wrap">
+                <div class="layui-input-prefix">
+                    <i class="layui-icon layui-icon-password"></i>
+                </div>
+                <input type="password" name="password" value="" lay-verify="required" placeholder="Password"
+                       lay-reqtext="Please Enter Password" autocomplete="off" class="layui-input" lay-affix="eye">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <button class="layui-btn layui-btn-fluid" lay-submit lay-filter="demo-login">Login</button>
+        </div>
+    </div>
+</form>
+<script>
+    layui.use(function () {
+        let form = layui.form;
+        let layer = layui.layer;
+        // 提交事件
+        form.on('submit(demo-login)', function (data) {
+            layui.$.ajax({
+                url: BASE_URL + "login",
+                method: "POST",
+                data: JSON.stringify(data.field),
+                contentType: "application/json",
+                dataType: 'json',
+                success: function (resp) {
+                    if (resp.status === 0) {
+                        location.href = "/index";
+                    } else {
+                        layer.alert(resp.msg);
+                    }
+                }
+            })
+            return false;
+        });
+    });
+</script>
+
+</body>
+</html>

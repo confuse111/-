@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<div th:replace="~{common/header::header}"></div>
+<body>
+<div class="content-top-nav">
+    <span class="layui-breadcrumb">
+        <a href="javascript:void(0)">首页</a>
+        <a href="javascript:void(0)">学生学习情况</a>
+        <a>
+          <cite>列表</cite>
+        </a>
+    </span>
+    <a class="layui-btn layui-btn-sm layui-layout-right layui-margin-1" onclick="location.reload()" title="刷新">
+        <i class="layui-icon layui-icon-refresh"></i>
+    </a>
+</div>
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-body ">
+                    <form class="layui-form layui-col-space5">
+                        <div class="layui-inline layui-show-xs-block">
+                            <select name="studentUserId" lay-search>
+                                <option value="">--学生--</option>
+                                <option th:each="i:${userMap}" th:value="${i.key}" th:text="${i.value.nickname}" th:selected="${i.key == studentLearn.studentUserId}"></option>
+                            </select>
+                        </div>
+                        <div class="layui-inline layui-show-xs-block">
+                            <div class="layui-input-inline">
+                                <button class="layui-btn" lay-submit lay-filter="search" id="searchBtn">
+                                    <i class="layui-icon layui-icon-search"></i>查询
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="layui-card-header">
+                    <button lay-on="toAdd" class="layui-btn layui-btn-sm">
+                        <i class="layui-icon layui-icon-add-circle"></i>录入成绩
+                    </button>
+                </div>
+                <div class="layui-card-body">
+                    <table class="layui-table">
+                        <thead>
+                            <tr>
+                                <th>编号</th>
+                                <th>课程</th>
+                                <th>学生姓名</th>
+                                <th>课堂表现</th>
+                                <th>实验</th>
+                                <th>课后作业</th>
+                                <th>大作业</th>
+                                <th>成绩</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="item:${studentLearns}">
+                                <td th:text="${item.id}"></td>
+                                <td th:text="${item.courseName}"></td>
+                                <td th:text="${userMap.get(item.studentUserId).nickname}"></td>
+                                <td>
+                                     <span th:if="${item.classroomPerformance == 0}">未知</span>
+                                     <span th:if="${item.classroomPerformance == 1}">普通加分</span>
+                                     <span th:if="${item.classroomPerformance == 2}">特别加分</span>
+                                </td>
+                                <td>
+                                    <span th:if="${item.experiment == 0}">未知</span>
+                                    <span th:if="${item.experiment == 1}">普通加分</span>
+                                    <span th:if="${item.experiment == 2}">特别加分</span>
+                                </td>
+                                <td>
+                                    <span th:if="${item.homework == 0}">未知</span>
+                                    <span th:if="${item.homework == 1}">普通加分</span>
+                                    <span th:if="${item.homework == 2}">特别加分</span>
+                                </td>
+                                <td>
+                                    <span th:if="${item.bigJob == 0}">未知</span>
+                                    <span th:if="${item.bigJob == 1}">普通加分</span>
+                                    <span th:if="${item.bigJob == 2}">特别加分</span>
+                                </td>
+                                <td th:text="${item.score}"></td>
+                                <td>
+                                    <button lay-on="toDel" th:data-id="${item.id}" class="layui-btn layui-btn-danger layui-btn-sm">
+                                        <i class="layui-icon layui-icon-delete"></i>删除
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    layui.use(function (){
+        let $ = layui.$;
+        layui.util.on('lay-on',{
+            'toAdd':function (){
+                edit();
+            },
+            'toEdit':function (elem){
+                edit($(elem).attr("data-id"));
+            },
+            'toDel':function (elem){
+                let id = $(elem).attr("data-id");
+                layui.layer.confirm('删除之后无法恢复，您确认要删除吗?', function (){
+                    $.ajax({
+                        url:BASE_URL + "student/learn/" + id,
+                        method:"DELETE",
+                        success:function (resp){
+                            if(resp.status === 0){
+                                location.reload();
+                            }else{
+                                layui.layer.alert(resp.msg);
+                            }
+                        }
+                    })
+                });
+            }
+        });
+
+        function edit(id){
+            let params = id ? ('?id=' + id) : '';
+            layui.layer.open({
+                type:2,
+                title: (id ? '编辑' : '录入学生成绩'),
+                shadeClose: true,
+                maxmin:false,
+                area:['720px','520px'],
+                content:BASE_URL + 'student/learn/toAddOrEdit' + params
+            })
+        }
+    });
+</script>
+</body>
+</html>
